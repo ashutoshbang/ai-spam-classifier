@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Downloaded datasets (fetched by `python -m spam_classifier.train`, never committed)
+data/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

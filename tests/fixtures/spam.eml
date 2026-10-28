@@ -1,0 +1,13 @@
+From: "Prize Department" <winner@lucky-prizes.example>
+To: you@example.com
+Subject: Congratulations! You have WON $1,000,000!!!
+Date: Mon, 13 May 2024 08:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<p>Dear Winner,</p>
+<p>You have been selected to receive <b>$1,000,000 CASH</b>! Click
+<a href="http://claim-now.example/win">HERE</a> to claim your prize now.</p>
+<p>This offer expires in 24 hours!!! Act now, 100% FREE, no purchase necessary.</p>
+</body></html>

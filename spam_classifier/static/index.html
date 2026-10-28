@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spam Classifier</title>
+  <style>
+    :root { --spam: #c62828; --ham: #2e7d32; --muted: #5f6368; --border: #d0d7de; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f6f8fa; color: #1f2328; }
+    main { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: .25rem; }
+    p.lead { color: var(--muted); margin-top: 0; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+    label { display: block; font-weight: 600; margin: .75rem 0 .35rem; }
+    input, select, textarea { width: 100%; font: inherit; padding: .6rem; border: 1px solid var(--border); border-radius: 6px; }
+    textarea { min-height: 180px; resize: vertical; }
+    .row { display: grid; grid-template-columns: 1fr 2fr; gap: .75rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+    button { font: inherit; padding: .6rem 1rem; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; }
+    button.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; font-weight: 600; }
+    button:disabled { opacity: .6; cursor: wait; }
+    .badge { display: inline-block; font-weight: 700; font-size: 1.25rem; padding: .3rem .8rem; border-radius: 999px; color: #fff; }
+    .badge.spam { background: var(--spam); } .badge.ham { background: var(--ham); }
+    .bar { height: 10px; background: #eaeef2; border-radius: 999px; overflow: hidden; margin: .75rem 0 .35rem; }
+    .bar > div { height: 100%; }
+    .chips span { display: inline-block; background: #eaeef2; border-radius: 999px; padding: .15rem .6rem; margin: .2rem .25rem 0 0; font-size: .9rem; }
+    .muted { color: var(--muted); font-size: .9rem; }
+    .error { color: var(--spam); }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Spam Classifier</h1>
+  <p class="lead">Paste an email or a text message to check whether it is spam.</p>
+
+  <form class="card" id="form">
+    <div class="row">
+      <div>
+        <label for="channel">Message type</label>
+        <select id="channel">
+          <option value="auto">Detect automatically</option>
+          <option value="email">Email</option>
+          <option value="sms">SMS / text message</option>
+        </select>
+      </div>
+      <div>
+        <label for="subject">Subject <span class="muted">(optional, emails only)</span></label>
+        <input id="subject" maxlength="1000" placeholder="e.g. You have won!">
+      </div>
+    </div>
+    <label for="text">Message</label>
+    <textarea id="text" required maxlength="100000" placeholder="Paste the message text, or a full raw email (.eml)"></textarea>
+    <div class="actions">
+      <button class="primary" type="submit" id="submit">Check message</button>
+      <button type="button" data-example="spam-sms">Example: spam SMS</button>
+      <button type="button" data-example="ham-email">Example: normal email</button>
+    </div>
+  </form>
+
+  <section class="card" id="result" aria-live="polite" hidden></section>
+  <p class="muted">API docs: <a href="/docs">/docs</a></p>
+</main>
+<script>
+  const EXAMPLES = {
+    "spam-sms": { channel: "auto", subject: "", text: "WINNER!! You have been selected to receive a £900 prize reward! To claim call 09061701461. Claim code KL341. Valid 12 hours only." },
+    "ham-email": { channel: "auto", subject: "Notes from today's meeting", text: "Hi Bob,\n\nHere are my notes from today's design review. We agreed to ship the API changes next sprint.\n\nThanks,\nAlice" },
+  };
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  document.querySelectorAll("[data-example]").forEach((button) => button.addEventListener("click", () => {
+    const example = EXAMPLES[button.dataset.example];
+    $("channel").value = example.channel; $("subject").value = example.subject; $("text").value = example.text;
+  }));
+
+  function show(nodes) { result.replaceChildren(...nodes); result.hidden = false; }
+  function el(tag, props = {}, children = []) { const node = Object.assign(document.createElement(tag), props); node.append(...children); return node; }
+
+  $("form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = $("submit");
+    submit.disabled = true;
+    try {
+      const response = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: $("text").value, subject: $("subject").value || null, channel: $("channel").value }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(Array.isArray(data.detail) ? data.detail.map((d) => d.msg).join("; ") : (data.detail || response.statusText));
+      const pct = (data.spam_probability * 100).toFixed(1);
+      const color = data.is_spam ? "var(--spam)" : "var(--ham)";
+      show([
+        el("span", { className: `badge ${data.label}`, textContent: data.is_spam ? "SPAM" : "NOT SPAM" }),
+        el("div", { className: "bar" }, [el("div", { style: `width:${pct}%;background:${color}` })]),
+        el("div", { className: "muted", textContent: `Spam probability ${pct}% · checked with the ${data.channel} model` }),
+        el("div", { className: "chips" }, data.top_signals.length
+          ? [el("strong", { textContent: "Top signals: " }), ...data.top_signals.map((s) => el("span", { textContent: s }))]
+          : []),
+      ]);
+    } catch (error) {
+      show([el("p", { className: "error", textContent: `Error: ${error.message}` })]);
+    } finally {
+      submit.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

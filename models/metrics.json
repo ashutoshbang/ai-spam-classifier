@@ -1,0 +1,136 @@
+{
+  "trained_at": "2026-10-28T12:40:23+00:00",
+  "package_version": "1.0.0",
+  "sklearn_version": "1.9.1",
+  "threshold": 0.5,
+  "test_size": 0.2,
+  "seed": 42,
+  "datasets": {
+    "sms": {
+      "description": "UCI SMS Spam Collection (5,574 SMS messages)",
+      "url": "https://raw.githubusercontent.com/justmarkham/pycon-2016-tutorial/5339710562cc46c4a32a369d63f1e8751a18a54e/data/sms.tsv"
+    },
+    "enron": {
+      "description": "Enron-Spam corpus (33,716 emails)",
+      "url": "https://github.com/MWiechmann/enron_spam_data/raw/e73c300263040f84b954e969ac06821c31cff47a/enron_spam_data.zip"
+    },
+    "spamassassin": {
+      "description": "SpamAssassin public corpus (6,046 raw emails)",
+      "url": "https://codeload.github.com/dmitrynogin/SpamAssassin/zip/e9ce73fe5ab4834eaa2abe2fed0a6198b3e9d9dc"
+    }
+  },
+  "metrics": {
+    "email": {
+      "train_messages": 32152,
+      "test": {
+        "messages": 7012,
+        "spam": 3265,
+        "ham": 3747,
+        "accuracy": 0.9909,
+        "precision": 0.992,
+        "recall": 0.9884,
+        "f1": 0.9902,
+        "roc_auc": 0.9995,
+        "false_positive_rate": 0.0069,
+        "confusion_matrix": {
+          "tn": 3721,
+          "fp": 26,
+          "fn": 38,
+          "tp": 3227
+        }
+      },
+      "test_by_source": {
+        "enron": {
+          "messages": 5835,
+          "spam": 2907,
+          "ham": 2928,
+          "accuracy": 0.9918,
+          "precision": 0.9934,
+          "recall": 0.99,
+          "f1": 0.9917,
+          "roc_auc": 0.9996,
+          "false_positive_rate": 0.0065,
+          "confusion_matrix": {
+            "tn": 2909,
+            "fp": 19,
+            "fn": 29,
+            "tp": 2878
+          }
+        },
+        "sms": {
+          "messages": 1027,
+          "spam": 124,
+          "ham": 903,
+          "accuracy": 0.9757,
+          "precision": 0.8898,
+          "recall": 0.9113,
+          "f1": 0.9004,
+          "roc_auc": 0.991,
+          "false_positive_rate": 0.0155,
+          "confusion_matrix": {
+            "tn": 889,
+            "fp": 14,
+            "fn": 11,
+            "tp": 113
+          }
+        },
+        "spamassassin": {
+          "messages": 1177,
+          "spam": 358,
+          "ham": 819,
+          "accuracy": 0.9864,
+          "precision": 0.9803,
+          "recall": 0.9749,
+          "f1": 0.9776,
+          "roc_auc": 0.9989,
+          "false_positive_rate": 0.0085,
+          "confusion_matrix": {
+            "tn": 812,
+            "fp": 7,
+            "fn": 9,
+            "tp": 349
+          }
+        }
+      }
+    },
+    "sms": {
+      "train_messages": 4111,
+      "test": {
+        "messages": 1027,
+        "spam": 124,
+        "ham": 903,
+        "accuracy": 0.9903,
+        "precision": 0.9831,
+        "recall": 0.9355,
+        "f1": 0.9587,
+        "roc_auc": 0.9864,
+        "false_positive_rate": 0.0022,
+        "confusion_matrix": {
+          "tn": 901,
+          "fp": 2,
+          "fn": 8,
+          "tp": 116
+        }
+      },
+      "test_by_source": {
+        "sms": {
+          "messages": 1027,
+          "spam": 124,
+          "ham": 903,
+          "accuracy": 0.9903,
+          "precision": 0.9831,
+          "recall": 0.9355,
+          "f1": 0.9587,
+          "roc_auc": 0.9864,
+          "false_positive_rate": 0.0022,
+          "confusion_matrix": {
+            "tn": 901,
+            "fp": 2,
+            "fn": 8,
+            "tp": 116
+          }
+        }
+      }
+    }
+  }
+}

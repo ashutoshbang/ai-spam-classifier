@@ -1,0 +1,9 @@
+# Runtime dependencies. scikit-learn is pinned exactly because the bundled model
+# (models/spam_classifier.joblib) is a pickle that must be loaded with the same version.
+scikit-learn==1.9.1
+numpy==2.5.4
+scipy==1.18.1
+joblib==1.6.0
+fastapi==0.162.0
+pydantic==2.14.1
+uvicorn[standard]==0.54.0
